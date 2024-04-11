@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      target: development
+    env_file: ./.env
+    volumes:
+      - ./:/usr/src/api
+      - /usr/src/api/node_modules
+    ports:
+      - 3000:3000
+    command: npm run dev
+    depends_on:
+      - mysql_server
+
+  mysql_server:
+    build: ./src/config
+    env_file: ./.env
+    environment:
+      - MYSQL_DATABASE=nlendb
+      - MYSQL_ROOT_PASSWORD=madpass
+      - MYSQL_USER=maduser
+      - MYSQL_PASSWORD=madpass
+    ports:
+      - 3306:3306
+    networks:
+      - backend
+
+networks:
+  backend:

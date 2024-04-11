@@ -1,0 +1,20 @@
+import express from 'express';
+import langRouter from './routes/lang.route';
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+app.use("/app", langRouter);
+
+// app.get('/', (req: Request, res: Response) => {
+//     return res.json({
+//         status: "dank u wel!"
+//     });
+// });
+
+
+
+app.listen(PORT, () => console.log(`listening on port ${PORT}`));
