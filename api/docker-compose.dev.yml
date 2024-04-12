@@ -24,7 +24,7 @@ services:
       - MYSQL_USER=maduser
       - MYSQL_PASSWORD=madpass
     ports:
-      - 3306:3306
+      - ${MYSQL_LOCAL_PORT}:3306
     networks:
       - backend
 
