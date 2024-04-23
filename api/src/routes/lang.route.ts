@@ -7,26 +7,8 @@ const langRouter = Router();
 langRouter.get('/q', langController.search);
 langRouter.get('/', langController.getAll);
 langRouter.post('/', langController.save);
-
-/*
-async (req: Request, res: Response) => {
-    // console.log("---------------------------");
-    // console.log(req.query.nl);
-    let val: string = req.query.nl != undefined? req.query.nl.toString(): '';
-    langService.find(val)
-        .then((word) => {
-            console.log(word);
-            res.status(200).send({
-                result: word
-            });
-        }).catch(err => {
-            res.status(500).send({
-                message: 'DATABASE ERROR',
-                error: err.code
-            });
-        });
-}
- */
+langRouter.delete('/:nl', langController.delWord);
+langRouter.put('/:nl', langController.updateWord);
 
 
 export default langRouter;

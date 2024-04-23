@@ -27,6 +27,8 @@ services:
       - ${MYSQL_LOCAL_PORT}:3306
     networks:
       - backend
+    volumes:
+      - ./my-dict:/var/lib/mysql
 
 networks:
   backend:
