@@ -1,25 +1,26 @@
-/*interface Word {
-    dutch: string;
-    engels: string;
-    notes?: Array<string>;
-    sentences?: Array<string>;
+export interface Word {
+  dutch: string;
+  engels: string;
+  notes?: Array<string>;
+  sentences?: Array<string>;
 }
 
-interface Pagination {
-    npp: number;
-    pages: number;
-    total: number;
+export interface Pagination {
+  npp: number;
+  pages: number;
+  total: number;
 }
 
 export interface Lang {
-    data: [Word];
-    meta: {
-        pagination: Pagination
-    };
-}*/
-export interface Lang {
-    dutch: string;
-    engels: string;
-    notes?: Array<string>;
-    sentences?: Array<string>;
+  data: [Word];
+  meta: {
+    pagination: Pagination;
+  };
 }
+// export interface Lang {
+//   dutch: string;
+//   engels: string;
+//   notes?: Array<string>;
+//   sentences?: Array<string>;
+
+// }

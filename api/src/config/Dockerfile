@@ -1,3 +1,3 @@
-FROM mysql
-EXPOSE 3306
-COPY ./testdump.sql /docker-entrypoint-initdb.d/1.sql
+FROM postgres
+EXPOSE 5432
+COPY ./testdump.sql /docker-entrypoint-initdb.d/

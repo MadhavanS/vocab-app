@@ -13,22 +13,22 @@ services:
       - 3000:3000
     command: npm run dev
     depends_on:
-      - mysql_server
+      - postgres_server
 
-  mysql_server:
+  postgres_server:
     build: ./src/config
     env_file: ./.env
     environment:
-      - MYSQL_DATABASE=nlendb
-      - MYSQL_ROOT_PASSWORD=madpass
-      - MYSQL_USER=maduser
-      - MYSQL_PASSWORD=madpass
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - ${MYSQL_LOCAL_PORT}:3306
+      - ${POSTGRES_LOCAL_PORT}:${POSTGRES_DOCKER_PORT}
     networks:
       - backend
     volumes:
-      - ./my-dict:/var/lib/mysql
+      - ./pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
 
 networks:
   backend:
