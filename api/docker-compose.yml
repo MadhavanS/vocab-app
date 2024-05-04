@@ -1,9 +1,34 @@
-version: '3.8'
+version: "3.8"
+
 services:
   api:
     build:
       context: .
-      target: production
+      target: development
+    env_file: ./.env
+    volumes:
+      - ./:/usr/src/api
+      - /usr/src/api/node_modules
     ports:
       - 3000:3000
-      
+    command: npm run dev
+    depends_on:
+      - postgres_server
+
+  postgres_server:
+    build: ./src/config
+    env_file: ./.env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_LOCAL_PORT}:${POSTGRES_DOCKER_PORT}
+    networks:
+      - backend
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+networks:
+  backend:
