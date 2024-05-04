@@ -2,18 +2,18 @@ import db from "./pool.connection";
 import { Word } from "../model/lang";
 
 const getAllRecords = async () => {
-  const result = await db.query("SELECT * FROM dutchDict ORDER BY dutchDict.dutch");
+  const result = await db.query("SELECT * FROM dutchDict ORDER BY dutchdict.dutch");
   return result.rows;
 };
 
 const getTotalRecord = async () => {
-  const recordCount = await db.query("SELECT COUNT(*) as total FROM dutchDict");
+  const recordCount = await db.query("SELECT COUNT(*) as total FROM dutchdict");
   return Number(recordCount.rows[0].total);
 };
 
 const addRecord = async (obj: Word) => {
   let re = await db.query(
-    `INSERT INTO dutchDict (dutch, engels, notes, sentences) VALUES (
+    `INSERT INTO dutchdict (dutch, engels, notes, sentences) VALUES (
       '${obj.dutch}', '${obj.engels}', 
       '${obj.notes !== undefined ? obj.notes : ""}', 
       '${obj.sentences !== undefined ? obj.sentences : ""}') RETURNING dutch`
@@ -23,7 +23,7 @@ const addRecord = async (obj: Word) => {
 
 const updateRecord = async (obj: Word, nl: string) => {
   let re = await db.query(
-    'UPDATE dutchDict SET dutch = $1, engels = $2, notes = $3, sentences = $4 WHERE dutch = $5',
+    'UPDATE dutchdict SET dutch = $1, engels = $2, notes = $3, sentences = $4 WHERE dutch = $5',
       [`${obj.dutch}`, `${obj.engels}`,
       `${obj.notes !== undefined ? obj.notes : ""}`,
       `${obj.sentences !== undefined ? obj.sentences : ""}`, `${nl}`]
@@ -33,7 +33,7 @@ const updateRecord = async (obj: Word, nl: string) => {
 
 const deleteRecord = async (nl: string) => {
   let re = await db.query(
-    'DELETE FROM dutchDict WHERE dutch = $1',
+    'DELETE FROM dutchdict WHERE dutch = $1',
       [`${nl}`]
   );
   return re;
