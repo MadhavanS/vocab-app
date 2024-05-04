@@ -14,5 +14,6 @@ const langRouter = Router();
 
 langRouter.get("/", getController.getAllController);
 langRouter.post("/", getController.addDataController);
-
+langRouter.put('/:nl', getController.updateController);
+langRouter.delete('/:nl', getController.deleteController);
 export default langRouter;

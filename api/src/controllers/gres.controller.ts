@@ -21,7 +21,7 @@ const getAllController = async (req: Request, res: Response) => {
     };
 
     res.json({
-      result: await getService.getAllService(),
+      result: await getService.getAllRecords(),
       meta: { pagination },
     });
   } catch (error) {
@@ -31,15 +31,19 @@ const getAllController = async (req: Request, res: Response) => {
 };
 
 const addDataController = async (req: Request, res: Response) => {
-  console.log(req.body);
   let rest = await getService.addRecord(req.body);
   res.json("added successfully " + rest);
 };
 
 const updateController = async (req: Request, res: Response) => {
   console.log(req.body);
-  let rest = await getService.addRecord(req.body);
-  res.json("added successfully " + rest);
+  let rest = await getService.updateRecord(req.body, req.params.nl);
+  res.json("updated successfully " + rest);
 };
 
-export default { getAllController, addDataController, updateController };
+const deleteController = async (req: Request, res: Response) => {
+  let rest = await getService.deleteRecord(req.params.nl);
+  res.json("deleted successfully " + rest);
+};
+
+export default { getAllController, addDataController, updateController, deleteController };
