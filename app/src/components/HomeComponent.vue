@@ -5,7 +5,7 @@
       <p class="text-center alert alert-success" v-if="isEmpty">Please enter value in dutch and engels!</p>
       <form @submit.prevent="addWord">
         <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500 py-4">
-          <input v-model="nlRef" type="text" placeholder="dutch" class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none">
+          <input v-model="nlRef" ref="nlRefInput" type="text" placeholder="dutch" class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none">
         </div>
 
         <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500 py-4">
@@ -45,6 +45,8 @@
     engels: string;
     notes: string;
     sentences: string;
+    createdAt: string;
+    updatedAt: string;
   }
 
   declare interface Pagination {
@@ -58,7 +60,8 @@
     result: [Word];
     meta: {pagination: Pagination};
   }
-
+  const uri = 'https://vocab-api-render.onrender.com'
+  // const uri = 'http://localhost:3000'
   let allWords = ref([] as Word[]);
   let nlRef = ref('');
   let enRef = ref('');
@@ -71,6 +74,7 @@
   let totalRecordCount = ref(0);
   let pagination = ref({} as Pagination);
   let page = ref(0);
+  const nlRefInput = ref(null);
 
   onMounted(async () => {
     allWords.value = await getWords();
@@ -79,7 +83,7 @@
   });
 
   async function getWords() {
-    const url = 'http://localhost:3000/app?page=1&limit=5';
+    const url = uri + '/app?page=1&limit=5';
     const api = await fetch(url);
     const response = await api.json();
     pagination.value = response.meta.pagination;
@@ -94,7 +98,7 @@
     // console.log(event.rows);
     // console.log(event.pageCount);
 
-    const url = `http://localhost:3000/app?page=${event.page+1}&limit=${event.rows}`;
+    const url = `${uri}/app?page=${event.page+1}&limit=${event.rows}`;
     console.log(url);
     const api = await fetch(url);
     const response = await api.json();
@@ -112,7 +116,7 @@
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({'dutch': nlRef.value, 'engels': enRef.value})
     };
-    const url = 'http://localhost:3000/app';
+    const url = uri + '/app';
     await fetch(url, requestOptions)
       .then(async response => {
         console.log(response);
@@ -126,6 +130,7 @@
     allWords.value = await getWords();
     tableChildRef.value.reset();
     resetText();
+    nlRefInput.value.focus();
   }
 
   function resetText() {
@@ -138,7 +143,7 @@
 
   async function deleteWord(nl: string) {
     console.log(nl);
-    const url = `http://localhost:3000/app/${nl}`;
+    const url = `${uri}/app/${nl}`;
     await fetch(url, { method: 'DELETE'});
     console.log('deleted');
     hasDeleted.value = true;
@@ -152,7 +157,7 @@
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({dutch: obj.dutch, engels: obj.engels})
     };
-    const url = `http://localhost:3000/app/${nl}`;
+    const url = `${uri}/app/${nl}`;
     await fetch(url, requestOptions)
       .then(async response => {
         console.log(response);
