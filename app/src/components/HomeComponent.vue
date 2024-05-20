@@ -18,8 +18,7 @@
     </div>
   </div>
   <div class="bg-white p-10 md:w-1/3 lg:w-1/2 mx-auto rounded space-y-10">
-    <p class="text-center alert alert-success" v-if="hasDeleted">Deleted Successfully!</p>
-    <p class="text-center alert alert-success" v-if="isAdded">Added Successfully!</p>
+    <p class="text-center alert alert-success" v-if="alertMessage.length !== 0">{{ alertMessage }}</p>
     <Paginator :rows="pagination.limit" :first="pagination.prev + 1"
                :totalRecords="pagination.total" @page="onPage($event)"
                :rowsPerPageOptions="pages">
@@ -61,13 +60,13 @@
     meta: {pagination: Pagination};
   }
   const uri = 'https://vocab-api-render.onrender.com'
-  // const uri = 'http://localhost:3000'
+  // const uri = 'http://localhost:3011'
   let allWords = ref([] as Word[]);
   let nlRef = ref('');
   let enRef = ref('');
-  let hasDeleted = ref(false);
+  // let hasDeleted = ref(false);
   let isEmpty = ref(false);
-  let isAdded = ref(false);
+  // let isAdded = ref(false);
   const tableChildRef = ref(null);
   let pages = ref([5, 10, 20, 30, 40, 50]);
   let rows = ref(10);
@@ -75,11 +74,12 @@
   let pagination = ref({} as Pagination);
   let page = ref(0);
   const nlRefInput = ref(null);
+  const alertMessage = ref('');
 
   onMounted(async () => {
     allWords.value = await getWords();
     totalRecordCount.value = allWords.value.length;
-    console.log(totalRecordCount.value);
+    alertMessage.value = '';
   });
 
   async function getWords() {
@@ -109,6 +109,7 @@
   async function addWord() {
     if(enRef.value === '' || nlRef.value === '' ) {
       isEmpty.value = true;
+      alertMessage.value = '';
       return;
     }
     const requestOptions: RequestInit = {
@@ -119,26 +120,28 @@
     const url = uri + '/app';
     await fetch(url, requestOptions)
       .then(async response => {
-        console.log(response);
-        let json = await response.json();
-        if(json.result === nlRef.value)
-          isAdded.value = true;
+        await response.json().then(jsonResponse => {
+          if (jsonResponse.dutch !== undefined && jsonResponse.dutch === nlRef.value) {
+            alertMessage.value = `${nlRef.value} added successfully`;
+          } else if(jsonResponse.result === 'duplicate key')
+            alertMessage.value = `${nlRef.value} - already exists in database!`;
+        });
       }).catch(error => {
         // errorMessage = error;
         console.error('There was an error!', error);
+        resetText();
+        alertMessage.value = '';
       });
+    resetText();
     allWords.value = await getWords();
     tableChildRef.value.reset();
-    resetText();
     nlRefInput.value.focus();
   }
 
   function resetText() {
     nlRef.value = '';
     enRef.value = '';
-    hasDeleted.value = false;
     isEmpty.value = false;
-    isAdded.value = false;
   }
 
   async function deleteWord(nl: string) {
@@ -146,7 +149,7 @@
     const url = `${uri}/app/${nl}`;
     await fetch(url, { method: 'DELETE'});
     console.log('deleted');
-    hasDeleted.value = true;
+    alertMessage.value = `${nl} deleted successfully!`;
     isEmpty.value = false;
     allWords.value = await getWords();
   }
@@ -161,7 +164,12 @@
     await fetch(url, requestOptions)
       .then(async response => {
         console.log(response);
-        await response.json();
+        let json = await response.json();
+        if(json.dutch === obj.dutch) {
+          alertMessage.value = `${obj.dutch} updated successfully`;
+          resetText();
+        }else if(json.result === 'duplicate key')
+          alertMessage.value = `${obj.dutch} - already exists in database!`;
       }).catch(error => {
         console.error('There was an error!', error);
       });
