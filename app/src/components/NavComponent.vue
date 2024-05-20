@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 </script>
 
 <template>
@@ -9,11 +8,13 @@
     </div>
     <span class="cursor-pointer text-white text-center font-semibold
               px-12 py-3 text-base font-serif">Dutch Vocabulary</span>
+
     <div class="flex md:flex md:flex-grow justify-end space-x-2 hs-dropdown relative ">
       <div class="grid grid-flow-col justify-end m-1 py-3">
         <i class="pi pi-cog cursor-pointer" style="font-size: 1.5rem"></i>
       </div>
     </div>
+
   </div>
 </template>
 
