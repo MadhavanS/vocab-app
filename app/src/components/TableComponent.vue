@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {PropType, ref, toRefs} from "vue";
-import Paginator from 'primevue/paginator';
 
   declare interface Word {
     dutch: string;
@@ -12,10 +11,6 @@ import Paginator from 'primevue/paginator';
   const props = defineProps({
     dict: Object as PropType<Word[]>
   });
-
-  // onMounted( () => {
-  //   reset()
-  // });
 
   let { dict } = toRefs(props);
   let wordObj = ref({} as Word);
@@ -64,7 +59,9 @@ import Paginator from 'primevue/paginator';
                      v-model="aWord.engels">
               <div v-else>
                 <div v-if="aWord.engels.includes(',')">
-                  <span class="px-18 whitespace-break-spaces">{{ aWord.engels }}</span>
+                  <div v-for="(commaSeperated, index) in aWord.engels.split(',')">
+                    <span class="px-18 whitespace-break-spaces">{{ commaSeperated.trim() }}</span>
+                  </div>
                 </div>
                 <div v-else>
                   <span class="px-18 whitespace-nowrap">{{ aWord.engels }}</span>

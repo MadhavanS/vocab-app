@@ -10,7 +10,7 @@ services:
       - ./:/usr/src/api
       - /usr/src/api/node_modules
     ports:
-      - 3000:3000
+      - ${EXPRESS_PORT}:${EXPRESS_PORT}
     command: npm run dev
     depends_on:
       - postgres_server

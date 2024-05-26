@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavComponent/>
+    <NavComponent @search="searchWord"/>
     <div class="bg-white p-10 md:w-2/3 lg:w-1/2 mx-auto rounded space-y-10">
       <p class="text-center alert alert-success" v-if="isEmpty">Please enter value in dutch and engels!</p>
       <form @submit.prevent="addWord">
@@ -17,6 +17,7 @@
       </form>
     </div>
   </div>
+
   <div class="bg-white p-10 md:w-1/3 lg:w-1/2 mx-auto rounded space-y-10">
     <p class="text-center alert alert-success" v-if="alertMessage.length !== 0">{{ alertMessage }}</p>
     <Paginator :rows="pagination.limit" :first="pagination.prev + 1"
@@ -57,24 +58,24 @@
 
   declare interface VocabResponse {
     result: [Word];
-    meta: {pagination: Pagination};
+    meta: Pagination;
   }
   const uri = 'https://vocab-api-render.onrender.com'
   // const uri = 'http://localhost:3011'
   let allWords = ref([] as Word[]);
   let nlRef = ref('');
   let enRef = ref('');
-  // let hasDeleted = ref(false);
   let isEmpty = ref(false);
-  // let isAdded = ref(false);
   const tableChildRef = ref(null);
-  let pages = ref([5, 10, 20, 30, 40, 50]);
-  let rows = ref(10);
+  let pages = ref([5, 10, 20, 30, 40, 50, 100, 1000]);
   let totalRecordCount = ref(0);
   let pagination = ref({} as Pagination);
-  let page = ref(0);
   const nlRefInput = ref(null);
   const alertMessage = ref('');
+  // let hasDeleted = ref(false);
+  // let rows = ref(10);
+  // let page = ref(0);
+  // let isAdded = ref(false);
 
   onMounted(async () => {
     allWords.value = await getWords();
@@ -83,12 +84,10 @@
   });
 
   async function getWords() {
-    const url = uri + '/app?page=1&limit=5';
+    const url = `${uri}/app`;
     const api = await fetch(url);
     const response = await api.json();
-    pagination.value = response.meta.pagination;
-    // page.value =
-    // console.log(response.result);
+    pagination.value = response.meta;
     return response.result;
   }
 
@@ -99,10 +98,9 @@
     // console.log(event.pageCount);
 
     const url = `${uri}/app?page=${event.page+1}&limit=${event.rows}`;
-    console.log(url);
     const api = await fetch(url);
     const response = await api.json();
-    pagination.value = response.meta.pagination;
+    pagination.value = response.meta;
     allWords.value = response.result;
   }
 
@@ -127,7 +125,6 @@
             alertMessage.value = `${nlRef.value} - already exists in database!`;
         });
       }).catch(error => {
-        // errorMessage = error;
         console.error('There was an error!', error);
         resetText();
         alertMessage.value = '';
@@ -145,7 +142,6 @@
   }
 
   async function deleteWord(nl: string) {
-    console.log(nl);
     const url = `${uri}/app/${nl}`;
     await fetch(url, { method: 'DELETE'});
     console.log('deleted');
@@ -163,7 +159,6 @@
     const url = `${uri}/app/${nl}`;
     await fetch(url, requestOptions)
       .then(async response => {
-        console.log(response);
         let json = await response.json();
         if(json.dutch === obj.dutch) {
           alertMessage.value = `${obj.dutch} updated successfully`;
@@ -175,6 +170,15 @@
       });
     allWords.value = await getWords();
     await getWords();
+    tableChildRef.value.reset();
+  }
+
+  async function searchWord(txt: string) {
+    const url = `${uri}/app/search?txt=${txt}`;
+    const api = await fetch(url);
+    const response = await api.json();
+    allWords.value = response.result;
+    pagination.value = response.meta;
     tableChildRef.value.reset();
   }
 
