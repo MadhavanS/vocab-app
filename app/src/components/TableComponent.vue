@@ -31,19 +31,19 @@ import {PropType, ref, toRefs} from "vue";
 </script>
 
 <template>
-    <table class="border-collapse border border-blue-500 ">
+    <table class="border-2 border-blue-500 rounded rounded-3xl">
       <thead>
-        <tr class="bg-gray-400">
-          <th class="w-1/2 p3 py-2 px-12 text-center uppercase bg-amber-300">dutch</th>
-          <th class="w-1/2 p3 py-2 px-12 text-center uppercase bg-green-300">engels</th>
-          <th class="w-3/4 p3 py-2 px-6 text-center uppercase bg-red-300">action</th>
+        <tr class="bg-blue-500 text-white">
+          <th class="w-1/4 py-2 px-18 uppercase">dutch</th>
+          <th class="w-1/4 py-2 px-18 uppercase">engels</th>
+          <th class="w-1/4 py-2 px-12 uppercase">action</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-200">
         <tr v-for="(aWord, index) in dict" :key="aWord">
             <td class="${wordObj && wordObj.dutch === vocab.dutch ?
-              'w-1/2 py-2 px-12 text-left duration-300 focus-within:border-indigo-500' :
-              'w-1/2 py-2 px-12 text-left text-gray-600'}">
+              'w-1/2 py-2 px-24 text-left duration-300 focus-within:border-indigo-500' :
+              'w-1/2 py-2 px-24 text-left text-gray-600'}">
               <input v-if="wordObj && (wordObj.dutch === aWord.dutch)"
                      class="text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
                     v-model="aWord.dutch"/>
@@ -68,12 +68,13 @@ import {PropType, ref, toRefs} from "vue";
                 </div>
               </div>
             </td>
-            <td class="w-1 px-3 text-right text-gray-600 font-medium text-sm">
-              <a href="#" class="text-indigo-600 hover:text-indigo-900">
-                <span v-if="wordObj && (wordObj.dutch === aWord.dutch)" @click="$emit('editCaller', aWord, keyWord)" >Save</span>
-                <span v-else v-on:click.prevent="editor(aWord)" >Edit</span>
+            <td class="text-center">
+              <a href="#">
+                <span v-if="wordObj && (wordObj.dutch === aWord.dutch)"  class="text-blue-500 hover:text-blue-200"
+                      @click="$emit('editCaller', aWord, keyWord)" >Save</span>
+                <span v-else v-on:click.prevent="editor(aWord)"  class="text-blue-500 hover:text-blue-200">Edit</span>
               </a>
-              <a href="#" @click="$emit('deleteCaller', aWord.dutch)" class="ml-2 text-red-600 hover:text-red-900">Delete</a>
+              <a href="#" @click="$emit('deleteCaller', aWord.dutch)" class="px-2 ml-2 text-red-600 hover:text-red-900">Delete</a>
             </td>
         </tr>
       </tbody>
