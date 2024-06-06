@@ -30,19 +30,19 @@
         </div>
 <!--        <input type="text" placeholder="tags"-->
 <!--               class="mt-1 block w-1/4 rounded-md border border-slate-300 bg-white px-3 py-4 placeholder-slate-400 shadow-sm placeholder:font-semibold placeholder:text-gray-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm"/>-->
-<!--        <div class="p-4 py-2">-->
-<!--          <textarea v-model="sentRef" name="textarea" id="text" cols="10" rows="5" placeholder="sentences"-->
-<!--                    class="h-40 px-3 py-4 w-full resize-none rounded-md border border-slate-300 font-semibold text-gray-300">Message</textarea>-->
-<!--        </div>-->
+        <div class="p-4 py-2">
+          <textarea v-model="sentRef" name="textarea" id="text" cols="10" rows="5" placeholder="sentences"
+                    class="h-40 px-3 py-4 w-full resize-none rounded-md border border-slate-300 font-semibold text-gray-300">Message</textarea>
+        </div>
         <div class="text-right p-4 py-2">
-          <Button type="button" icon="pi pi-plus" @click="addWord"
+          <Button type="button" icon="pi pi-plus" @click="addWord" ref="reference"
                   class="py-3 px-4 transform rounded-md bg-blue-100 font-semibold duration-300 hover:bg-indigo-400" label="add"></Button>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="bg-white p-12 md:w-1/3 lg:w-1/2 mx-auto">
+  <div class="bg-white p-12 md:w-1/3 lg:w-1/2 mx-auto" v-if="allWords.length > 0">
     <p class="text-center alert alert-success" v-if="alertMessage.length !== 0">{{ alertMessage }}</p>
     <Paginator :rows="pagination.limit" :first="pagination.prev + 1"
                :totalRecords="pagination.total" @page="onPage($event)"
@@ -56,6 +56,11 @@
     <table-component ref="tableChildRef" :dict="allWords"
                      @deleteCaller="deleteWord" @editCaller="updateWord"/>
   </div>
+  <div v-else>
+    <p class="text-center alert alert-success p-2 font-thin font-serif text-red-600">
+      Sorry, no results found !!!
+    </p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -64,7 +69,6 @@
   import NavComponent from "@/components/NavComponent.vue";
   import Paginator from "primevue/paginator";
   import Button from 'primevue/button';
-
 
   declare interface Word {
     dutch: string;
@@ -113,6 +117,10 @@
   });
 
   async function getWords() {
+    if(pagination.value) {
+      pagination.value.next = 2;
+      pagination.value.limit = 5;
+    }
     const url = `${uri}/app?page=${pagination.value.next - 1}&limit=${pagination.value.limit}`;
     const api = await fetch(url);
     const response = await api.json();
@@ -145,7 +153,7 @@
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({'dutch': nlRef.value, 'engels': enRef.value})
+      body: JSON.stringify({'dutch': nlRef.value, 'engels': enRef.value, 'sentences': sentRef.value})
     };
     const url = uri + `/app?page=${pagination.value.next-1}&limit=${pagination.value.limit}`;
     await fetch(url, requestOptions)
@@ -173,6 +181,7 @@
   function resetText() {
     nlRef.value = '';
     enRef.value = '';
+    sentRef.value = '';
     isEmpty.value = false;
   }
 
@@ -183,7 +192,6 @@
     isEmpty.value = false;
     let resp = await getWords();
     allWords.value = resp.result;
-    // pagination.value = resp.meta;
   }
 
   async function updateWord(obj: Word, nl: string) {

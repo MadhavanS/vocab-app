@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {PropType, ref, toRefs} from "vue";
+  import {PropType, ref, toRefs} from "vue";
 
   declare interface Word {
     dutch: string;
@@ -15,6 +15,7 @@ import {PropType, ref, toRefs} from "vue";
   let { dict } = toRefs(props);
   let wordObj = ref({} as Word);
   let keyWord = ref('' as string);
+  // let truthVar = ref(false as boolean);
 
   function editor(nl: Word) {
     keyWord.value = nl.dutch;
@@ -25,13 +26,16 @@ import {PropType, ref, toRefs} from "vue";
     wordObj.value = {};
   }
 
-  defineExpose({
-    reset
-  });
+  // function truthy(nl: string) {
+  //   truthVar.value = wordObj && (wordObj.value.dutch === nl)
+  //   return truthVar.value;
+  // }
+
+  defineExpose({ reset });
 </script>
 
 <template>
-    <table class="border-2 border-blue-500 rounded rounded-3xl">
+    <table class="border-2 border-blue-500">
       <thead>
         <tr class="bg-blue-500 text-white">
           <th class="w-1/4 py-2 px-18 uppercase">dutch</th>
@@ -70,11 +74,15 @@ import {PropType, ref, toRefs} from "vue";
             </td>
             <td class="text-center">
               <a href="#">
-                <span v-if="wordObj && (wordObj.dutch === aWord.dutch)"  class="text-blue-500 hover:text-blue-200"
-                      @click="$emit('editCaller', aWord, keyWord)" >Save</span>
-                <span v-else v-on:click.prevent="editor(aWord)"  class="text-blue-500 hover:text-blue-200">Edit</span>
+                <span v-if="wordObj && (wordObj.dutch === aWord.dutch)">
+                  <span class="text-blue-500 hover:text-blue-200 p-2"
+                        @click="$emit('editCaller', aWord, keyWord)" >Save</span>
+                  <span v-on:click.prevent="reset" class="text-blue-500 hover:text-blue-200">Cancel</span>
+                </span>
+                <span v-else v-on:click.prevent="editor(aWord)" class="text-blue-500 hover:text-blue-200">Edit</span>
               </a>
-              <a href="#" @click="$emit('deleteCaller', aWord.dutch)" class="px-2 ml-2 text-red-600 hover:text-red-900">Delete</a>
+              <a href="#" @click="$emit('deleteCaller', aWord.dutch)" class="ml-2 text-red-600 hover:text-red-900 p-2">Delete</a>
+
             </td>
         </tr>
       </tbody>
