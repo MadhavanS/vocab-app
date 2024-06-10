@@ -24,15 +24,20 @@
       <div class="p-2">
         <div class="flex gap-2 mx-4">
           <input v-model="nlRef" ref="nlRefInput" type="text" placeholder="dutch"
-                 class="mt-1 block w-1/2 rounded-md border border-slate-300 bg-white px-3 py-4 placeholder-slate-400 shadow-sm placeholder:font-semibold placeholder:text-gray-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm" />
+                 class="mt-1 block w-1/2 font-mono text-1xl rounded-md border border-slate-300 bg-white px-3 py-4
+                 placeholder-slate-400 placeholder:text-gray-300
+                 focus:border-sky-500 focus:outline-none" />
           <input v-model="enRef" type="text" placeholder="english" @keydown.enter="addWord"
-                 class="mt-1 block w-1/2 rounded-md border border-slate-300 bg-white px-3 py-4 placeholder-slate-400 shadow-sm placeholder:font-semibold placeholder:text-gray-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm"/>
+                 class="mt-1 block w-1/2 font-mono text-1xl rounded-md border border-slate-300 bg-white px-3 py-4
+                 placeholder-slate-400 placeholder:text-gray-300
+                 focus:border-sky-500 focus:outline-none"/>
         </div>
 <!--        <input type="text" placeholder="tags"-->
 <!--               class="mt-1 block w-1/4 rounded-md border border-slate-300 bg-white px-3 py-4 placeholder-slate-400 shadow-sm placeholder:font-semibold placeholder:text-gray-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm"/>-->
         <div class="p-4 py-2">
           <textarea v-model="sentRef" name="textarea" id="text" cols="10" rows="5" placeholder="sentences"
-                    class="h-40 px-3 py-4 w-full resize-none rounded-md border border-slate-300 font-semibold text-gray-300">Message</textarea>
+                    class="h-40 px-3 py-4 w-full resize-none rounded-md border border-slate-300 font-mono text-1xl
+                    placeholder-slate-400 placeholder:text-gray-300 focus:border-sky-500 focus:outline-none"></textarea>
         </div>
         <div class="text-right p-4 py-2">
           <Button type="button" icon="pi pi-plus" @click="addWord" ref="reference"
@@ -42,24 +47,27 @@
     </div>
   </div>
 
-  <div class="bg-white p-12 md:w-1/3 lg:w-1/2 mx-auto" v-if="allWords.length > 0">
-    <p class="text-center alert alert-success" v-if="alertMessage.length !== 0">{{ alertMessage }}</p>
+  <div class="mt-6 border-2 border-blue-400 md:w-2/3 lg:w-1/2 mx-auto rounded rounded-3xl">
+  <div class="antialiased text-gray-600 p-8 container" v-if="allWords.length > 0">
+    <p class="text-center alert alert-success p-2" v-if="alertMessage.length !== 0">{{ alertMessage }}</p>
+    <table-component class="flex flex-col justify-center" ref="tableChildRef" :dict="allWords" @addSentenceCaller="updateSentence"
+                     @deleteCaller="deleteWord" @editCaller="updateWord"/>
+
     <Paginator :rows="pagination.limit" :first="pagination.prev + 1"
                :totalRecords="pagination.total" @page="onPage($event)"
                :rowsPerPageOptions="pages">
-<!--      <template #start="slotProps">-->
-<!--        Page: {{ slotProps.state.page }}-->
-<!--        First: {{ slotProps.state.first }}-->
-<!--        Rows: {{ slotProps.state.rows }}-->
-<!--      </template>-->
+      <!--      <template #start="slotProps">-->
+      <!--        Page: {{ slotProps.state.page }}-->
+      <!--        First: {{ slotProps.state.first }}-->
+      <!--        Rows: {{ slotProps.state.rows }}-->
+      <!--      </template>-->
     </Paginator>
-    <table-component ref="tableChildRef" :dict="allWords"
-                     @deleteCaller="deleteWord" @editCaller="updateWord"/>
   </div>
   <div v-else>
     <p class="text-center alert alert-success p-2 font-thin font-serif text-red-600">
       Sorry, no results found !!!
     </p>
+  </div>
   </div>
 </template>
 
@@ -98,7 +106,7 @@
   let sentRef = ref('');
   let isEmpty = ref(false);
   const tableChildRef = ref(null);
-  let pages = ref([5, 10, 20, 30, 40, 50, 100, 1000]);
+  let pages = ref([10, 20, 30, 40, 50, 100, 1000]);
   let totalRecordCount = ref(0);
   let pagination = ref({} as Pagination);
   let rows = ref(5);
@@ -119,7 +127,7 @@
   async function getWords() {
     if(pagination.value) {
       pagination.value.next = 2;
-      pagination.value.limit = 5;
+      pagination.value.limit = 10;
     }
     const url = `${uri}/app?page=${pagination.value.next - 1}&limit=${pagination.value.limit}`;
     const api = await fetch(url);
@@ -198,7 +206,7 @@
     const requestOptions: RequestInit = {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({dutch: obj.dutch, engels: obj.engels})
+      body: JSON.stringify({dutch: obj.dutch, engels: obj.engels, sentences: obj.sentences})
     };
     const url = `${uri}/app?nl=${nl}&page=${pagination.value.next-1}&limit=${pagination.value.limit}`;
     await fetch(url, requestOptions)
@@ -227,6 +235,8 @@
     pagination.value = response.meta;
     tableChildRef.value.reset();
   }
+
+  async function updateSentence(obj: Word) {}
 
   /*data() {
     return {
