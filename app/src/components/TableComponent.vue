@@ -7,6 +7,7 @@ declare interface Word {
   engels: string;
   notes: string;
   sentences: string;
+  ex: boolean;
 }
 
 const props = defineProps({
@@ -17,7 +18,7 @@ let { dict } = toRefs(props);
 let wordObj = ref({} as Word);
 let keyWord = ref('' as string);
 let expand = ref(false as boolean);
-let isClicked = ref(false as boolean);
+let isClicked = ref([false] as [boolean]);
 
 function editor(nl: Word) {
   keyWord.value = nl.dutch;
@@ -51,16 +52,16 @@ defineExpose({ reset });
           </thead>
           <tbody class="text-sm divide-y divide-gray-100">
           <template v-for="(aWord, index) in dict" :key="aWord">
-            <tr @click="(isClicked = !isClicked) && (aWord.dutch != null)">
-              <td class="${wordObj && wordObj.dutch === vocab.dutch ?
-              'text-left duration-300 focus-within:border-indigo-500 p-2 whitespace-nowrap' :
-              'text-left text-gray-600 p-2 whitespace-nowrap'}">
-                <div class="flex items-center">
+            <tr @click="(isClicked[index] = !isClicked[index]) && (aWord.dutch != null)">
+              <td class="{{wordObj && (wordObj.dutch === vocab.dutch) ?
+                  'text-left duration-300 focus-within:border-indigo-500 p-2 whitespace-nowrap' :
+                  'text-left text-gray-600 p-2 whitespace-nowrap'}}">
+<!--                <div :class="isClicked[index] && (aWord.sentences != null)? 'pi pi-chevron-down items-start font-medium': 'font-medium pi pi-chevron-right items-start' ">-->
                   <input v-if="wordObj && (wordObj.dutch === aWord.dutch)"
-                         class="text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
+                         class="text-indigo-700 border-b-2 px-1 font-thin text-xl border-indigo-500 outline-none focus:bg-gray-300"
                          v-model="aWord.dutch"/>
                   <div v-else class="group inline-block relative">
-                    <span class="text-gray-900 hover:text-gray-400 cursor-pointer transition-all ease-in-out
+                    <span class="text-gray-900 px-1 font-thin text-xl hover:text-gray-400 cursor-pointer transition-all ease-in-out
                          before:transition-[width] before:ease-in-out before:duration-700 before:absolute before:bg-gray-400
                          before:origin-center before:h-[1px] before:w-0 hover:before:w-[50%] before:bottom-0 before:left-[50%]
                          after:transition-[width] after:ease-in-out after:duration-700 after:absolute after:bg-gray-400
@@ -73,7 +74,7 @@ defineExpose({ reset });
                       <p class="px-4 py-2">{{ aWord.sentences }}</p>
                     </div>
                   </div>
-                </div>
+<!--                </div>-->
               </td>
               <td class="${wordObj && wordObj.dutch === vocab.dutch ?
                   'text-left duration-300 focus-within:border-indigo-500 p-2 whitespace-nowrap' :
@@ -109,7 +110,7 @@ defineExpose({ reset });
                 <input class="text-indigo-900 border-b-2 border-indigo-500 outline-none focus:bg-gray-200 w-3/4" v-model="aWord.sentences"/>
               </td>
             </tr>
-            <tr v-if="!expand && isClicked" class="bg-amber-50 px-6 py-4 p-1">
+            <tr v-if="!expand && isClicked[index]" class="bg-amber-50 px-6 py-4 p-1">
               <td v-if="aWord.sentences != null && aWord.sentences.length > 0" class="text-center p-2 whitespace-nowrap" :colspan="4">
                 <div>{{aWord.sentences}}</div>
               </td>
