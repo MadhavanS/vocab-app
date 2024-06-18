@@ -96,8 +96,8 @@ declare interface VocabResponse {
   result: [Word];
   meta: Pagination;
 }
-// const uri = 'https://vocab-api-render.onrender.com'
-const uri = 'http://localhost:3011'
+const uri = 'https://vocab-api-render.onrender.com'
+// const uri = 'http://localhost:3011'
 let allWords = ref([] as Word[]);
 let nlRef = ref('');
 let enRef = ref('');
