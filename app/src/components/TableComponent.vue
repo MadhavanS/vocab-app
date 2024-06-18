@@ -40,9 +40,9 @@ defineExpose({ reset });
       <h2 class="font-semibold text-gray-800">List of Vocabulary</h2>
     </header>
     <div class="p-3">
-      <div class="overflow-x-auto">
+      <div class="overflow-x-visible">
         <table class="table-auto w-full">
-          <thead class="text-xs font-semibold uppercase bg-gray-100">
+          <thead class="text-md font-semibold uppercase bg-gray-100">
           <tr>
             <th scope="col" class="p-2 whitespace-nowrap">
               <div class="font-semibold text-left">dutch</div></th>
@@ -53,12 +53,12 @@ defineExpose({ reset });
           <tbody class="text-sm divide-y divide-gray-100">
           <template v-for="(aWord, index) in dict" :key="aWord">
             <tr @click="(isClicked[index] = !isClicked[index]) && (aWord.dutch != null)">
-              <td class="{{wordObj && (wordObj.dutch === vocab.dutch) ?
+              <td :class="wordObj && (wordObj.dutch === aWord.dutch) ?
                   'text-left duration-300 focus-within:border-indigo-500 p-2 whitespace-nowrap' :
-                  'text-left text-gray-600 p-2 whitespace-nowrap'}}">
+                  'text-left text-gray-600 p-2 whitespace-nowrap'">
 <!--                <div :class="isClicked[index] && (aWord.sentences != null)? 'pi pi-chevron-down items-start font-medium': 'font-medium pi pi-chevron-right items-start' ">-->
                   <input v-if="wordObj && (wordObj.dutch === aWord.dutch)"
-                         class="text-indigo-700 border-b-2 px-1 font-thin text-xl border-indigo-500 outline-none focus:bg-gray-300"
+                         class="text-indigo-700 mb-2 w-40 border-b-2 px-1 font-thin text-xl border-indigo-500 outline-none focus:bg-gray-300"
                          v-model="aWord.dutch"/>
                   <div v-else class="group inline-block relative">
                     <span class="text-gray-900 px-1 font-thin text-xl hover:text-gray-400 cursor-pointer transition-all ease-in-out
@@ -80,7 +80,7 @@ defineExpose({ reset });
                   'text-left duration-300 focus-within:border-indigo-500 p-2 whitespace-nowrap' :
                   'text-left text-gray-600 p-2 whitespace-nowrap'}">
                 <input v-if="wordObj && (wordObj.dutch === aWord.dutch)"
-                       class="text-indigo-700 border-b-2 border-indigo-500 outline-none whitespace-nowrap focus:bg-gray-300"
+                       class="text-indigo-700 w-full border-b-2 border-indigo-500 outline-none whitespace-nowrap focus:bg-gray-300"
                        v-model="aWord.engels">
                 <div v-else>
                   <div v-if="aWord.engels.includes(',')">
