@@ -52,7 +52,8 @@
       <div :class="alertMessage.includes('Sorry')? 'text-red-600': 'text-green-600'" >
         <p v-if="alertMessage.length !== 0" class="font-bold font-mono text-center p-3">{{ alertMessage }}</p>
       </div>
-      <table-component class="flex flex-col-reverse justify-center" ref="tableChildRef" :dict="allWords" @addSentenceCaller="updateSentence"
+      <table-component class="flex flex-col-reverse justify-center" ref="tableChildRef" :dict="allWords"
+                       @addSentenceCaller="updateSentence"
                        @deleteCaller="deleteWord" @editCaller="updateWord"/>
 
       <Paginator :rows="pagination.limit" :first="pagination.prev + 1"
@@ -95,15 +96,15 @@ declare interface VocabResponse {
   result: [Word];
   meta: Pagination;
 }
-const uri = 'https://vocab-api-render.onrender.com'
-// const uri = 'http://localhost:3011'
+// const uri = 'https://vocab-api-render.onrender.com'
+const uri = 'http://localhost:3011'
 let allWords = ref([] as Word[]);
 let nlRef = ref('');
 let enRef = ref('');
 let sentRef = ref('');
 let isEmpty = ref(false);
 const tableChildRef = ref(null);
-let pages = ref([10, 20, 30, 40, 50, 100, 1000]);
+let pages = ref([20, 30, 40, 50, 100, 200, 1000]);
 let totalRecordCount = ref(0);
 let pagination = ref({} as Pagination);
 let rows = ref(5);
@@ -126,7 +127,7 @@ onMounted(async () => {
 async function getWords() {
   if(pagination.value) {
     pagination.value.next = 2;
-    pagination.value.limit = 10;
+    pagination.value.limit = 20;
   }
   const url = `${uri}/app?page=${pagination.value.next - 1}&limit=${pagination.value.limit}`;
   const api = await fetch(url);
